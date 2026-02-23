@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
+    const { getFreshDb } = await import('@/lib/fresh-db')
+    const db = getFreshDb()
+
     const body = await request.json()
     const { name, phone, email, package: pkg, message } = body
 
@@ -41,6 +43,7 @@ export async function POST(request: NextRequest) {
     // 2. Send WhatsApp message using an API service
     // 3. Send confirmation SMS to the customer
 
+    await db.$disconnect()
     return NextResponse.json(
       {
         success: true,

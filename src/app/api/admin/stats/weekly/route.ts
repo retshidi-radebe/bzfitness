@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
 import { format, subDays, startOfDay, endOfDay } from 'date-fns'
 
 export async function GET() {
   try {
+    const { getFreshDb } = await import('@/lib/fresh-db')
+    const db = getFreshDb()
+
     const today = new Date()
     const weekAgo = subDays(today, 6)
 
@@ -35,6 +37,8 @@ export async function GET() {
         amount: true,
       }
     })
+
+    await db.$disconnect()
 
     // Aggregate by day
     const weeklyData = []

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { getFreshDb } = await import('@/lib/fresh-db')
+    const db = getFreshDb()
+
     const { id } = await params
     const body = await request.json()
     const { status } = body
@@ -15,6 +17,7 @@ export async function PATCH(
       data: { status },
     })
 
+    await db.$disconnect()
     return NextResponse.json(contact)
   } catch (error) {
     console.error('Error updating contact:', error)
