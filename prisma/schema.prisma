@@ -1,0 +1,160 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  package   String
+  message   String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+}
+
+model Member {
+  id              String    @id @default(cuid())
+  name            String
+  phone           String
+  email           String?
+  dateOfBirth     DateTime?
+  gender          String?   // male, female, other
+  address         String?
+
+  // Emergency Contact
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?
+
+  // Health Information
+  medicalConditions String?  // Any medical conditions to be aware of
+  injuries          String?  // Any injuries or physical limitations
+
+  // Membership
+  packageType     String    // package-1, package-2, package-3
+  status          String    @default("active") // active, inactive
+  joinDate        DateTime  @default(now())
+  nextPaymentDate DateTime?
+
+  // Terms
+  agreedToTerms   Boolean   @default(false)
+  agreedAt        DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  attendances     Attendance[]
+  payments        Payment[]
+  weightEntries   WeightEntry[]
+  goal            MemberGoal?
+  personalRecords PersonalRecord[]
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  timeSlot  String   // morning (6:30 AM), evening (5:00 PM)
+  dayOfWeek String   // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+  createdAt DateTime @default(now())
+
+  @@index([memberId])
+  @@index([date])
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  amount    Float
+  package   String   // package-1, package-2, package-3
+  status    String   @default("pending") // paid, pending, overdue
+  dueDate   DateTime
+  paidDate  DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([memberId])
+  @@index([status])
+}
+
+model WeightEntry {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  weight    Float    // kg
+  bodyFat   Float?   // % body fat
+  date      DateTime @default(now())
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([memberId])
+}
+
+model MemberGoal {
+  id              String    @id @default(cuid())
+  memberId        String    @unique
+  member          Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  goalDescription String?
+  targetWeight    Float?
+  targetDate      DateTime?
+  fitnessLevel    String?   // beginner, intermediate, advanced
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model PersonalRecord {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  exercise  String
+  value     String
+  date      DateTime @default(now())
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([memberId])
+}
+
+model Schedule {
+  id        String   @id @default(cuid())
+  dayOfWeek String   // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+  timeSlot  String   // 6:30 AM, 5:00 PM
+  activity  String   // Leg Day, Upper Body, Recovery, Fun Walk/Run
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([dayOfWeek, timeSlot])
+}
