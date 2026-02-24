@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import {
   LayoutDashboard,
@@ -14,7 +15,8 @@ import {
   LogOut,
   Menu,
   Sun,
-  Moon
+  Moon,
+  UserCog,
 } from 'lucide-react'
 import Image from 'next/image'
 import { AdminThemeProvider, useAdminTheme } from '@/lib/admin-theme'
@@ -24,7 +26,7 @@ interface AdminLayoutProps {
   title: string
 }
 
-const navItems = [
+const baseNavItems = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Members', href: '/admin/members', icon: Users },
   { label: 'Attendance', href: '/admin/attendance', icon: Calendar },
@@ -38,6 +40,18 @@ function AdminLayoutContent({ children, title }: AdminLayoutProps) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { theme, toggleTheme, mounted } = useAdminTheme()
+  const [currentUser, setCurrentUser] = useState<{ role: string; username: string } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/admin/me')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) setCurrentUser(data) })
+      .catch(() => {})
+  }, [])
+
+  const navItems = currentUser?.role === 'superadmin'
+    ? [...baseNavItems, { label: 'Users', href: '/admin/users', icon: UserCog }]
+    : baseNavItems
 
   const handleLogout = async () => {
     try {
@@ -54,9 +68,7 @@ function AdminLayoutContent({ children, title }: AdminLayoutProps) {
   }
 
   const isActive = (href: string) => {
-    if (href === '/admin') {
-      return pathname === '/admin'
-    }
+    if (href === '/admin') return pathname === '/admin'
     return pathname.startsWith(href)
   }
 
@@ -76,22 +88,13 @@ function AdminLayoutContent({ children, title }: AdminLayoutProps) {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-72 p-0">
                   <div className="flex flex-col h-full">
-                    {/* Mobile Menu Header */}
                     <div className="p-4 border-b flex items-center gap-3">
-                      <Image
-                        src="/BZ.png"
-                        alt="BZ Fitness"
-                        width={40}
-                        height={40}
-                        className="object-contain"
-                      />
+                      <Image src="/BZ.png" alt="BZ Fitness" width={40} height={40} className="object-contain" />
                       <div>
                         <h2 className="font-bold text-lg">BZ Fitness</h2>
                         <p className="text-xs text-muted-foreground">Admin Dashboard</p>
                       </div>
                     </div>
-
-                    {/* Mobile Navigation */}
                     <nav className="flex-1 p-4">
                       <ul className="space-y-2">
                         {navItems.map((item) => (
@@ -111,24 +114,14 @@ function AdminLayoutContent({ children, title }: AdminLayoutProps) {
                         ))}
                       </ul>
                     </nav>
-
-                    {/* Mobile Menu Footer */}
                     <div className="p-4 border-t space-y-2">
                       {mounted && (
-                        <Button
-                          onClick={toggleTheme}
-                          variant="outline"
-                          className="w-full flex items-center gap-2"
-                        >
+                        <Button onClick={toggleTheme} variant="outline" className="w-full flex items-center gap-2">
                           {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                           {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
                         </Button>
                       )}
-                      <Button
-                        onClick={handleLogout}
-                        variant="outline"
-                        className="w-full flex items-center gap-2"
-                      >
+                      <Button onClick={handleLogout} variant="outline" className="w-full flex items-center gap-2">
                         <LogOut className="h-4 w-4" />
                         Logout
                       </Button>
@@ -139,13 +132,7 @@ function AdminLayoutContent({ children, title }: AdminLayoutProps) {
 
               {/* Logo & Title */}
               <div className="flex items-center gap-3">
-                <Image
-                  src="/BZ.png"
-                  alt="BZ Fitness"
-                  width={36}
-                  height={36}
-                  className="object-contain hidden sm:block"
-                />
+                <Image src="/BZ.png" alt="BZ Fitness" width={36} height={36} className="object-contain hidden sm:block" />
                 <h1 className="text-xl sm:text-2xl font-bold text-foreground">{title}</h1>
               </div>
 
@@ -170,15 +157,26 @@ function AdminLayoutContent({ children, title }: AdminLayoutProps) {
               </nav>
             </div>
 
-            {/* Desktop Theme Toggle & Logout */}
+            {/* Right side: username + role badge + theme + logout */}
             <div className="hidden sm:flex items-center gap-2">
+              {currentUser && (
+                <div className="flex items-center gap-2 mr-1">
+                  <span className="text-sm text-muted-foreground">{currentUser.username}</span>
+                  <Badge
+                    variant={currentUser.role === 'superadmin' ? 'destructive' : 'secondary'}
+                    className="text-xs capitalize"
+                  >
+                    {currentUser.role}
+                  </Badge>
+                </div>
+              )}
               {mounted && (
                 <Button
                   onClick={toggleTheme}
                   variant="ghost"
                   size="icon"
                   title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-                  className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
+                  className="text-gray-700 dark:text-gray-200"
                 >
                   {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                 </Button>

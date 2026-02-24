@@ -551,6 +551,10 @@ export default function Home() {
                   <MapPin className="h-4 w-4" />
                   Setsoto Intermediate School, Tseki
                 </li>
+                <li className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  bzfitnessandwellness@outlook.com
+                </li>
               </ul>
             </div>
           </div>

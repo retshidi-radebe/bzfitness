@@ -158,3 +158,12 @@ model Schedule {
 
   @@unique([dayOfWeek, timeSlot])
 }
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("admin") // "admin" | "superadmin"
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
