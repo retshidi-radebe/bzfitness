@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowLeft, Target, Weight, Trophy, Trash2, Plus, Save } from 'lucide-react'
+import { ArrowLeft, Target, Weight, Trophy, Trash2, Plus, Save, Sparkles, ClipboardList } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface Member {
@@ -93,6 +93,28 @@ export default function MemberProgressPage() {
     notes: '',
   })
   const [addingRecord, setAddingRecord] = useState(false)
+
+  // Workout plan
+  const [workoutPlan, setWorkoutPlan] = useState<string | null>(null)
+  const [generatingPlan, setGeneratingPlan] = useState(false)
+
+  const handleGeneratePlan = async () => {
+    setGeneratingPlan(true)
+    setWorkoutPlan(null)
+    try {
+      const res = await fetch(`/api/admin/members/${memberId}/workout-plan`, { method: 'POST' })
+      const data = await res.json()
+      if (res.ok) {
+        setWorkoutPlan(data.plan)
+      } else {
+        toast({ title: 'Error', description: data.error || 'Failed to generate plan', variant: 'destructive' })
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Failed to generate plan', variant: 'destructive' })
+    } finally {
+      setGeneratingPlan(false)
+    }
+  }
 
   useEffect(() => {
     fetchProgress()
@@ -560,6 +582,39 @@ export default function MemberProgressPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Workout Plan */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-purple-500" />
+            AI Workout Plan Generator
+          </CardTitle>
+          <CardDescription>
+            Generate a personalized weekly workout plan based on this member&apos;s profile, goals, and fitness level
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            onClick={handleGeneratePlan}
+            disabled={generatingPlan}
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            {generatingPlan ? 'Generating plan...' : 'Generate Workout Plan'}
+          </Button>
+
+          {workoutPlan && (
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <div className="flex items-center gap-2 mb-3">
+                <ClipboardList className="h-4 w-4 text-purple-500" />
+                <span className="font-semibold text-sm">Generated Plan</span>
+              </div>
+              <pre className="whitespace-pre-wrap text-sm leading-relaxed font-sans">{workoutPlan}</pre>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </AdminLayout>
   )
 }

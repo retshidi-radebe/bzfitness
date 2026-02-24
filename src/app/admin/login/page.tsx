@@ -36,7 +36,7 @@ export default function LoginPage() {
           title: 'Welcome back!',
           description: 'You have been logged in successfully.',
         })
-        router.push('/admin/contact')
+        router.push('/admin')
       } else {
         toast({
           title: 'Login failed',
