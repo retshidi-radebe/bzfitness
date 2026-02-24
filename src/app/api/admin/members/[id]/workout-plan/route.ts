@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export async function POST(
   request: NextRequest,
@@ -7,10 +6,10 @@ export async function POST(
 ) {
   try {
     const { id } = await params
-    const apiKey = process.env['GEMINI_API_KEY']
+    const apiKey = process.env['GROQ_API_KEY']
 
     if (!apiKey || apiKey === 'your_key_here') {
-      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 })
+      return NextResponse.json({ error: 'Groq API key not configured' }, { status: 500 })
     }
 
     const { getFreshDb } = await import('@/lib/fresh-db')
@@ -56,7 +55,6 @@ export async function POST(
       if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--
     }
 
-    // Package → sessions per week
     const packageSessions: Record<string, string> = {
       'package-1': '1 session per week (R50)',
       'package-2': '2 sessions per week (R85)',
@@ -93,11 +91,31 @@ INSTRUCTIONS:
 
 Keep the plan concise and actionable.`
 
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2048,
+      }),
+    })
 
-    const result = await model.generateContent(prompt)
-    const plan = result.response.text()
+    if (!response.ok) {
+      const err = await response.text()
+      console.error('Groq error:', err)
+      return NextResponse.json({ error: 'AI service error' }, { status: 500 })
+    }
+
+    const data = await response.json()
+    const plan = data.choices?.[0]?.message?.content
+
+    if (!plan) {
+      return NextResponse.json({ error: 'No response from AI' }, { status: 500 })
+    }
 
     return NextResponse.json({ plan })
   } catch (error) {
