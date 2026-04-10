@@ -307,8 +307,8 @@ export default function Home() {
             <div className="mb-8 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl p-6 text-white text-center">
               <div className="flex items-center justify-center gap-4">
                 <div className="flex-1">
-                  <p className="text-2xl md:text-3xl font-bold mb-1">🎉 50% OFF FOR FEBRUARY!</p>
-                  <p className="text-sm md:text-base opacity-90">Join any package this month and save 50%</p>
+                  <p className="text-2xl md:text-3xl font-bold mb-1">🎉 25% OFF — LIMITED TIME!</p>
+                  <p className="text-sm md:text-base opacity-90">Join any package now and save 25%</p>
                 </div>
                 <div className="hidden md:flex text-6xl animate-bounce">
                   ⚡
@@ -320,14 +320,14 @@ export default function Home() {
               {/* Package 1 */}
               <Card className="border-2 hover:border-green-400 transition-colors relative overflow-hidden">
                 <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
-                  50% OFF
+                  25% OFF
                 </div>
                 <CardHeader>
                   <CardTitle className="text-2xl">Package 1</CardTitle>
                   <CardDescription>Perfect for beginners</CardDescription>
                   <div className="mt-4">
                     <span className="text-lg text-muted-foreground line-through mr-2">R100</span>
-                    <span className="text-4xl font-bold text-green-600">R50</span>
+                    <span className="text-4xl font-bold text-green-600">R75</span>
                     <span className="text-sm text-muted-foreground">/month</span>
                   </div>
                 </CardHeader>
@@ -348,7 +348,7 @@ export default function Home() {
               {/* Package 2 - Featured */}
               <Card className="border-4 border-green-500 relative overflow-hidden">
                 <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
-                  50% OFF
+                  25% OFF
                 </div>
                 <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
                   POPULAR
@@ -358,7 +358,7 @@ export default function Home() {
                   <CardDescription>Best value</CardDescription>
                   <div className="mt-4">
                     <span className="text-lg text-muted-foreground line-through mr-2">R170</span>
-                    <span className="text-4xl font-bold text-green-600">R85</span>
+                    <span className="text-4xl font-bold text-green-600">R130</span>
                     <span className="text-sm text-muted-foreground">/month</span>
                   </div>
                 </CardHeader>
@@ -379,14 +379,14 @@ export default function Home() {
               {/* Package 3 */}
               <Card className="border-2 hover:border-orange-400 transition-colors relative overflow-hidden">
                 <div className="absolute top-0 left-0 bg-orange-500 text-white text-xs font-bold px-3 py-1">
-                  50% OFF
+                  25% OFF
                 </div>
                 <CardHeader>
                   <CardTitle className="text-2xl">Package 3</CardTitle>
                   <CardDescription>Premium experience</CardDescription>
                   <div className="mt-4">
                     <span className="text-lg text-muted-foreground line-through mr-2">R250</span>
-                    <span className="text-4xl font-bold text-orange-600">R125</span>
+                    <span className="text-4xl font-bold text-orange-600">R190</span>
                     <span className="text-sm text-muted-foreground">/month</span>
                   </div>
                 </CardHeader>
