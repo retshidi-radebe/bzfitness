@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { useParams, useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components/admin-layout'
 import { Button } from '@/components/ui/button'
@@ -105,7 +107,8 @@ export default function MemberProgressPage() {
       const res = await fetch(`/api/admin/members/${memberId}/workout-plan`, { method: 'POST' })
       const data = await res.json()
       if (res.ok) {
-        setWorkoutPlan(data.plan)
+        // Models sometimes emit <br> despite the prompt; react-markdown would print it literally
+        setWorkoutPlan(String(data.plan).replace(/<br\s*\/?>/gi, '\n'))
       } else {
         toast({ title: 'Error', description: data.error || 'Failed to generate plan', variant: 'destructive' })
       }
@@ -610,7 +613,43 @@ export default function MemberProgressPage() {
                 <ClipboardList className="h-4 w-4 text-purple-500" />
                 <span className="font-semibold text-sm">Generated Plan</span>
               </div>
-              <pre className="whitespace-pre-wrap text-sm leading-relaxed font-sans">{workoutPlan}</pre>
+              <div className="text-sm leading-relaxed">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h1: ({ children }) => <h3 className="text-base font-bold mt-5 mb-2 first:mt-0">{children}</h3>,
+                    h2: ({ children }) => <h3 className="text-base font-bold mt-5 mb-2 first:mt-0 text-purple-700 dark:text-purple-300">{children}</h3>,
+                    h3: ({ children }) => <h4 className="text-sm font-semibold mt-4 mb-1.5 first:mt-0">{children}</h4>,
+                    p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc pl-5 mb-3 space-y-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal pl-5 mb-3 space-y-1">{children}</ol>,
+                    li: ({ children }) => <li className="marker:text-muted-foreground">{children}</li>,
+                    strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                    em: ({ children }) => <em className="italic text-muted-foreground">{children}</em>,
+                    hr: () => <hr className="my-4 border-border" />,
+                    a: ({ href, children }) => (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="underline">{children}</a>
+                    ),
+                    code: ({ children }) => (
+                      <code className="rounded bg-background px-1 py-0.5 text-xs">{children}</code>
+                    ),
+                    /* The prompt asks for no tables, but render one readably if the model emits it anyway */
+                    table: ({ children }) => (
+                      <div className="overflow-x-auto my-3">
+                        <table className="w-full text-xs border-collapse">{children}</table>
+                      </div>
+                    ),
+                    th: ({ children }) => (
+                      <th className="border border-border px-2 py-1 text-left font-semibold align-top">{children}</th>
+                    ),
+                    td: ({ children }) => (
+                      <td className="border border-border px-2 py-1 align-top">{children}</td>
+                    ),
+                  }}
+                >
+                  {workoutPlan}
+                </ReactMarkdown>
+              </div>
             </div>
           )}
         </CardContent>

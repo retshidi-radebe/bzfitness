@@ -95,8 +95,18 @@ INSTRUCTIONS:
 - Match the intensity to their fitness level
 - Focus on their stated goal
 - Use exercises suitable for a small group fitness gym (no specialized equipment assumptions)
-- Format the plan clearly: Day → Warm-up → Main workout (exercise, sets × reps/duration) → Cool-down
 - Add a brief note at the end with 1-2 practical tips for this member specifically
+
+FORMAT - follow exactly:
+- Output GitHub-flavoured Markdown. Never output HTML tags; in particular never use <br>.
+- Do NOT use Markdown tables. They do not fit the admin screen and become unreadable.
+- Open with a "## Overview" section: 2-4 short bullet points covering the goal, weekly
+  training frequency, fitness level, and any injury or medical caveat.
+- Then one "## " heading per training day, formatted as "## Monday - Lower body strength".
+- Inside each day use exactly these three bold labels, each on its own line and each
+  followed by a bullet list: **Warm-up**, **Main workout**, **Cool-down**.
+- Put one exercise per bullet, written as "Exercise name - 3 x 12" or "Plank - 3 x 30s".
+- Close with a "## Notes" section of 1-2 bullets addressed to this member.
 
 Keep the plan concise and actionable.`
 
