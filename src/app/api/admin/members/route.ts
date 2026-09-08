@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getSession } from '@/lib/auth'
 
 // GET all members
 export async function GET() {
+  const session = await getSession()
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     console.log('[MEMBERS API] Fetching members...')
     const { getFreshDb } = await import('@/lib/fresh-db')
@@ -37,6 +43,11 @@ export async function GET() {
 
 // POST create new member
 export async function POST(request: NextRequest) {
+  const session = await getSession()
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const { getFreshDb } = await import('@/lib/fresh-db')
     const db = getFreshDb()

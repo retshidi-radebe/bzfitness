@@ -11,7 +11,18 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 const SESSION_COOKIE_NAME = 'admin_session'
-const SESSION_SECRET = process.env.SESSION_SECRET || process.env.NEXTAUTH_SECRET || 'bz-fitness-secret-key-change-in-production'
+// This default is committed to the repo, so anyone who can read the source can
+// mint a valid superadmin cookie with it. It is only tolerable for local dev.
+const INSECURE_DEFAULT_SECRET = 'bz-fitness-secret-key-change-in-production'
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.NEXTAUTH_SECRET || INSECURE_DEFAULT_SECRET
+
+if (process.env.NODE_ENV === 'production' && SESSION_SECRET === INSECURE_DEFAULT_SECRET) {
+  throw new Error(
+    'SESSION_SECRET or NEXTAUTH_SECRET must be set in production. Refusing to sign ' +
+    'sessions with the public default key, which would let anyone forge a superadmin session.'
+  )
+}
+const SESSION_MAX_AGE_MS = 60 * 60 * 24 * 1000 // 24 hours, matches the cookie maxAge
 
 export interface AdminSession {
   isLoggedIn: boolean
@@ -71,10 +82,21 @@ export async function getSession(): Promise<AdminSession | null> {
     .update(payload)
     .digest('hex')
 
-  if (signature !== expectedSig) return null
+  // Constant-time compare so a forged signature cannot be probed byte by byte
+  const sigBuf = Buffer.from(signature, 'utf-8')
+  const expectedBuf = Buffer.from(expectedSig, 'utf-8')
+  if (sigBuf.length !== expectedBuf.length) return null
+  if (!crypto.timingSafeEqual(sigBuf, expectedBuf)) return null
 
   try {
     const sessionData = JSON.parse(Buffer.from(payload, 'base64').toString('utf-8')) as AdminSession
+
+    // The cookie maxAge only stops a well-behaved browser from sending the token.
+    // A captured token stays valid forever unless we check loginTime server-side.
+    if (!sessionData.isLoggedIn) return null
+    if (typeof sessionData.loginTime !== 'number') return null
+    if (Date.now() - sessionData.loginTime > SESSION_MAX_AGE_MS) return null
+
     return sessionData
   } catch {
     return null
