@@ -98,16 +98,17 @@ Keep the plan concise and actionable.`
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         messages: [{ role: 'user', content: prompt }],
-        max_tokens: 2048,
+        max_tokens: 4096,
+        reasoning_effort: 'low',
       }),
     })
 
     if (!response.ok) {
       const err = await response.text()
-      console.error('Groq error:', err)
-      return NextResponse.json({ error: 'AI service error' }, { status: 500 })
+      console.error('Groq error:', response.status, err)
+      return NextResponse.json({ error: `AI service error (${response.status})` }, { status: 500 })
     }
 
     const data = await response.json()

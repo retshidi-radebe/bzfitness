@@ -53,3 +53,4 @@ server.log
 /db/*.db
 /db/*.db-shm
 /db/*.db-wal
+CLAUDE.md

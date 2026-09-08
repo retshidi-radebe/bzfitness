@@ -125,9 +125,9 @@ export function ContactForm() {
             <SelectValue placeholder="Select a package" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="package-1">Package 1 - R50/month (50% OFF)</SelectItem>
-            <SelectItem value="package-2">Package 2 - R85/month (50% OFF)</SelectItem>
-            <SelectItem value="package-3">Package 3 - R125/month (50% OFF)</SelectItem>
+            <SelectItem value="package-1">Package 1 - R75/month (25% OFF)</SelectItem>
+            <SelectItem value="package-2">Package 2 - R130/month (25% OFF)</SelectItem>
+            <SelectItem value="package-3">Package 3 - R190/month (25% OFF)</SelectItem>
             <SelectItem value="unsure">Not sure yet</SelectItem>
             <SelectItem value="other">Other inquiry</SelectItem>
           </SelectContent>
