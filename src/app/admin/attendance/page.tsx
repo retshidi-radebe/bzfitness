@@ -43,12 +43,12 @@ export default function AttendancePage() {
   const [loading, setLoading] = useState(true)
   const [isMarkModalOpen, setIsMarkModalOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'))
-  const [quickCheckInSession, setQuickCheckInSession] = useState<'morning' | 'evening'>('morning')
+  const [quickCheckInSession, setQuickCheckInSession] = useState<'morning' | 'evening'>('evening')
   const [memberSearch, setMemberSearch] = useState('')
   const [checkingIn, setCheckingIn] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     memberId: '',
-    timeSlot: 'morning',
+    timeSlot: 'evening',
     dayOfWeek: 'Monday',
   })
   const [currentPage, setCurrentPage] = useState(1)
@@ -105,7 +105,7 @@ export default function AttendancePage() {
         setIsMarkModalOpen(false)
         setFormData({
           memberId: '',
-          timeSlot: 'morning',
+          timeSlot: 'evening',
           dayOfWeek: 'Monday',
         })
         fetchAttendances()
@@ -127,42 +127,52 @@ export default function AttendancePage() {
     }
   }
 
-  // Quick Check-In function
+  // Quick Check-In toggle. Clicking an already-checked-in member deletes the
+  // record, so a mis-tick can be undone instead of leaving someone marked
+  // present who never came.
   const handleQuickCheckIn = async (memberId: string, memberName: string) => {
     setCheckingIn(memberId)
     const dayOfWeek = format(new Date(selectedDate), 'EEEE')
+    const existing = attendances.find(
+      a => a.memberId === memberId && a.timeSlot === quickCheckInSession
+    )
+    const slotLabel = quickCheckInSession === 'morning' ? '6:30 AM' : '5:00 PM'
 
     try {
-      const res = await fetch('/api/admin/attendance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          memberId,
-          date: selectedDate,
-          timeSlot: quickCheckInSession,
-          dayOfWeek,
-        }),
-      })
+      const res = existing
+        ? await fetch(`/api/admin/attendance/${existing.id}`, { method: 'DELETE' })
+        : await fetch('/api/admin/attendance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              memberId,
+              date: selectedDate,
+              timeSlot: quickCheckInSession,
+              dayOfWeek,
+            }),
+          })
 
       if (res.ok) {
         toast({
-          title: 'Checked In!',
-          description: `${memberName} checked in for ${quickCheckInSession === 'morning' ? '6:30 AM' : '5:00 PM'} session`,
+          title: existing ? 'Check-in undone' : 'Checked In!',
+          description: existing
+            ? `${memberName} is no longer marked present for the ${slotLabel} session`
+            : `${memberName} checked in for ${slotLabel} session`,
         })
         fetchAttendances()
       } else {
         const error = await res.json()
         toast({
           title: 'Error',
-          description: error.error || 'Failed to check in',
+          description: error.error || (existing ? 'Failed to undo check-in' : 'Failed to check in'),
           variant: 'destructive',
         })
       }
     } catch (error) {
-      console.error('Error checking in:', error)
+      console.error('Error toggling check-in:', error)
       toast({
         title: 'Error',
-        description: 'Failed to check in',
+        description: existing ? 'Failed to undo check-in' : 'Failed to check in',
         variant: 'destructive',
       })
     } finally {
@@ -326,7 +336,9 @@ export default function AttendancePage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
+                        {/* Morning session paused
                         <SelectItem value="morning">Morning (6:30 AM)</SelectItem>
+                        */}
                         <SelectItem value="evening">Evening (5:00 PM)</SelectItem>
                       </SelectContent>
                     </Select>
@@ -342,7 +354,9 @@ export default function AttendancePage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {/* Morning session paused - only the 5:00 PM session runs for now.
+            Historical morning records still appear in the table below.
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -354,6 +368,7 @@ export default function AttendancePage() {
             <p className="text-sm text-muted-foreground mt-1">6:30 AM</p>
           </CardContent>
         </Card>
+        */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -388,15 +403,18 @@ export default function AttendancePage() {
                 Quick Check-In
               </CardTitle>
               <CardDescription>
-                One-click check-in for {format(new Date(selectedDate), 'PPP')}
+                One-click check-in for {format(new Date(selectedDate), 'PPP')}.
+                Click a green name again to undo it.
               </CardDescription>
             </div>
             <Tabs value={quickCheckInSession} onValueChange={(v) => setQuickCheckInSession(v as 'morning' | 'evening')}>
               <TabsList>
+                {/* Morning session paused
                 <TabsTrigger value="morning" className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   6:30 AM
                 </TabsTrigger>
+                */}
                 <TabsTrigger value="evening" className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   5:00 PM
@@ -431,10 +449,11 @@ export default function AttendancePage() {
                     key={member.id}
                     variant={isCheckedIn ? 'secondary' : 'outline'}
                     className={`h-auto py-3 px-4 flex flex-col items-center gap-1 ${
-                      isCheckedIn ? 'bg-green-100 text-green-700 border-green-300' : ''
+                      isCheckedIn ? 'bg-green-100 text-green-700 border-green-300 hover:bg-red-50 hover:text-red-700 hover:border-red-300' : ''
                     }`}
-                    disabled={isCheckedIn || isLoading}
+                    disabled={isLoading}
                     onClick={() => handleQuickCheckIn(member.id, member.name)}
+                    title={isCheckedIn ? 'Click to undo this check-in' : 'Click to check in'}
                   >
                     {isLoading ? (
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current" />
