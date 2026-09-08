@@ -200,9 +200,9 @@ export default function ContactSubmissionsPage() {
                 )}
                 <div>
                   <span className="font-semibold">Package:</span>{' '}
-                  {submission.package === 'package-1' && 'Package 1 - R50/month (50% OFF)'}
-                  {submission.package === 'package-2' && 'Package 2 - R85/month (50% OFF)'}
-                  {submission.package === 'package-3' && 'Package 3 - R125/month (50% OFF)'}
+                  {submission.package === 'package-1' && 'Package 1'}
+                  {submission.package === 'package-2' && 'Package 2'}
+                  {submission.package === 'package-3' && 'Package 3'}
                   {submission.package === 'unsure' && 'Not sure yet'}
                   {submission.package === 'other' && 'Other inquiry'}
                 </div>
@@ -289,9 +289,9 @@ export default function ContactSubmissionsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="package-1">Package 1 - R50/month</SelectItem>
-                  <SelectItem value="package-2">Package 2 - R85/month</SelectItem>
-                  <SelectItem value="package-3">Package 3 - R125/month</SelectItem>
+                  <SelectItem value="package-1">Package 1</SelectItem>
+                  <SelectItem value="package-2">Package 2</SelectItem>
+                  <SelectItem value="package-3">Package 3</SelectItem>
                 </SelectContent>
               </Select>
             </div>

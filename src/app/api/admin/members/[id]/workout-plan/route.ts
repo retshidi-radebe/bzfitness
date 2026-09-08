@@ -55,10 +55,13 @@ export async function POST(
       if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--
     }
 
+    // Training volume per package, kept in sync with the pricing cards in
+    // src/app/page.tsx. Prices are deliberately not included - they are not
+    // relevant to programming and only drift out of date here.
     const packageSessions: Record<string, string> = {
-      'package-1': '1 session per week (R50)',
-      'package-2': '2 sessions per week (R85)',
-      'package-3': '3 sessions per week (R125)',
+      'package-1': '1 session on weekdays, 1 scaling per month',
+      'package-2': 'Unlimited sessions weekly, 5 scalings per month',
+      'package-3': '5 hours private session per month, personalised diet plan, regular check-ups, unlimited scaling',
     }
 
     const currentWeight = weightEntries[0]?.weight ?? null

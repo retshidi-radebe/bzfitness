@@ -60,9 +60,9 @@ export function exportMembers(members: any[]) {
     { key: 'email', label: 'Email', transform: (v) => v || '' },
     { key: 'packageType', label: 'Package', transform: (v) => {
       switch (v) {
-        case 'package-1': return 'Package 1 - R50'
-        case 'package-2': return 'Package 2 - R85'
-        case 'package-3': return 'Package 3 - R125'
+        case 'package-1': return 'Package 1'
+        case 'package-2': return 'Package 2'
+        case 'package-3': return 'Package 3'
         default: return v
       }
     }},
@@ -78,9 +78,9 @@ export function exportPayments(payments: any[]) {
     { key: 'amount', label: 'Amount (R)', transform: (v) => v?.toFixed(2) || '0.00' },
     { key: 'package', label: 'Package', transform: (v) => {
       switch (v) {
-        case 'package-1': return 'Package 1 - R50'
-        case 'package-2': return 'Package 2 - R85'
-        case 'package-3': return 'Package 3 - R125'
+        case 'package-1': return 'Package 1'
+        case 'package-2': return 'Package 2'
+        case 'package-3': return 'Package 3'
         default: return v
       }
     }},

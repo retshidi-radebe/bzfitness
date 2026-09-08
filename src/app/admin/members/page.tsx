@@ -257,9 +257,9 @@ export default function MembersPage() {
 
   const getPackageLabel = (packageType: string) => {
     switch (packageType) {
-      case 'package-1': return 'Package 1 - R50'
-      case 'package-2': return 'Package 2 - R85'
-      case 'package-3': return 'Package 3 - R125'
+      case 'package-1': return 'Package 1'
+      case 'package-2': return 'Package 2'
+      case 'package-3': return 'Package 3'
       default: return packageType
     }
   }
@@ -526,9 +526,9 @@ export default function MembersPage() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="package-1">Package 1 - R50/month</SelectItem>
-                              <SelectItem value="package-2">Package 2 - R85/month</SelectItem>
-                              <SelectItem value="package-3">Package 3 - R125/month</SelectItem>
+                              <SelectItem value="package-1">Package 1</SelectItem>
+                              <SelectItem value="package-2">Package 2</SelectItem>
+                              <SelectItem value="package-3">Package 3</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -634,9 +634,9 @@ export default function MembersPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Packages</SelectItem>
-              <SelectItem value="package-1">Package 1 - R50</SelectItem>
-              <SelectItem value="package-2">Package 2 - R85</SelectItem>
-              <SelectItem value="package-3">Package 3 - R125</SelectItem>
+              <SelectItem value="package-1">Package 1</SelectItem>
+              <SelectItem value="package-2">Package 2</SelectItem>
+              <SelectItem value="package-3">Package 3</SelectItem>
             </SelectContent>
           </Select>
 
@@ -1000,9 +1000,9 @@ export default function MembersPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="package-1">Package 1 - R50/month</SelectItem>
-                          <SelectItem value="package-2">Package 2 - R85/month</SelectItem>
-                          <SelectItem value="package-3">Package 3 - R125/month</SelectItem>
+                          <SelectItem value="package-1">Package 1</SelectItem>
+                          <SelectItem value="package-2">Package 2</SelectItem>
+                          <SelectItem value="package-3">Package 3</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

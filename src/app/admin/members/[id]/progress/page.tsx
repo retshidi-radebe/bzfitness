@@ -49,9 +49,9 @@ interface PersonalRecord {
 }
 
 const PACKAGE_LABELS: Record<string, string> = {
-  'package-1': 'Package 1 - R50',
-  'package-2': 'Package 2 - R85',
-  'package-3': 'Package 3 - R125',
+  'package-1': 'Package 1',
+  'package-2': 'Package 2',
+  'package-3': 'Package 3',
 }
 
 export default function MemberProgressPage() {
