@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast'
 import { format } from 'date-fns'
 import { Download, UserPlus } from 'lucide-react'
-import { exportContacts } from '@/lib/export-csv'
+import { exportContacts } from '@/lib/export-excel'
 
 interface ContactSubmission {
   id: string

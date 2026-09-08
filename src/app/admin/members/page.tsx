@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast'
 import { AdminLayout } from '@/components/admin-layout'
 import { Users, Plus, Edit, Trash2, Search, X, Download, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react'
 import { format } from 'date-fns'
-import { exportMembers } from '@/lib/export-csv'
+import { exportMembers } from '@/lib/export-excel'
 
 const ITEMS_PER_PAGE = 10
 

@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast'
 import { AdminLayout } from '@/components/admin-layout'
 import { DollarSign, Calendar, Plus, CheckCircle, AlertCircle, MessageCircle, Send, Download, ChevronLeft, ChevronRight, Trash2, ChevronsUpDown, Check } from 'lucide-react'
 import { format } from 'date-fns'
-import { exportPayments } from '@/lib/export-csv'
+import { exportPayments } from '@/lib/export-excel'
 import { cn } from '@/lib/utils'
 
 const ITEMS_PER_PAGE = 10

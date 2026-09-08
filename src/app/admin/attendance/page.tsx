@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast'
 import { AdminLayout } from '@/components/admin-layout'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Calendar, Clock, User, CheckCircle, UserCheck, Search, Download, ChevronLeft, ChevronRight, ChevronsUpDown, Check } from 'lucide-react'
-import { exportAttendance } from '@/lib/export-csv'
+import { exportAttendance } from '@/lib/export-excel'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 
