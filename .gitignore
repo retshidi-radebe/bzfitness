@@ -57,3 +57,8 @@ CLAUDE.md
 
 # This project uses bun (bun.lock); an npm lockfile makes Vercel switch to npm
 package-lock.json
+
+# SQLite dev database - contains real member personal data, never commit
+prisma/db/*.db
+prisma/db/*.db-shm
+prisma/db/*.db-wal
