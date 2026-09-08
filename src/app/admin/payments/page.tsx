@@ -45,6 +45,12 @@ export default function PaymentsPage() {
   const [loading, setLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState('all')
+  // Tax exports care about when money was actually received, so the range
+  // filters on paidDate by default; dueDate is available for billing review.
+  const [dateBasis, setDateBasis] = useState<'paidDate' | 'dueDate'>('paidDate')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
+  const [datePreset, setDatePreset] = useState('all')
   const [formData, setFormData] = useState({
     memberId: '',
     amount: '',
@@ -236,23 +242,71 @@ export default function PaymentsPage() {
     members.find(m => m.id === p.memberId)?.phone
   )
 
+  // SARS tax years run 1 March to the end of the following February
+  const saTaxYear = (startYear: number) => ({
+    from: `${startYear}-03-01`,
+    to: `${startYear + 1}-02-${String(new Date(startYear + 1, 2, 0).getDate()).padStart(2, '0')}`,
+  })
+  const currentTaxYearStart = new Date().getMonth() >= 2
+    ? new Date().getFullYear()
+    : new Date().getFullYear() - 1
+
+  const applyPreset = (preset: string) => {
+    setDatePreset(preset)
+    const now = new Date()
+    const iso = (d: Date) => format(d, 'yyyy-MM-dd')
+    if (preset === 'all') {
+      setDateFrom('')
+      setDateTo('')
+    } else if (preset === 'this-month') {
+      setDateFrom(iso(new Date(now.getFullYear(), now.getMonth(), 1)))
+      setDateTo(iso(new Date(now.getFullYear(), now.getMonth() + 1, 0)))
+    } else if (preset === 'last-month') {
+      setDateFrom(iso(new Date(now.getFullYear(), now.getMonth() - 1, 1)))
+      setDateTo(iso(new Date(now.getFullYear(), now.getMonth(), 0)))
+    } else if (preset === 'tax-current') {
+      const r = saTaxYear(currentTaxYearStart)
+      setDateFrom(r.from)
+      setDateTo(r.to)
+    } else if (preset === 'tax-previous') {
+      const r = saTaxYear(currentTaxYearStart - 1)
+      setDateFrom(r.from)
+      setDateTo(r.to)
+    }
+  }
+
+  const filteredPayments = payments.filter(p => {
+    if (!dateFrom && !dateTo) return true
+    const raw = dateBasis === 'paidDate' ? p.paidDate : p.dueDate
+    // An unpaid payment has no paidDate, so it cannot fall inside a paid-date range
+    if (!raw) return false
+    const value = new Date(raw)
+    if (dateFrom && value < new Date(`${dateFrom}T00:00:00`)) return false
+    if (dateTo && value > new Date(`${dateTo}T23:59:59.999`)) return false
+    return true
+  })
+
+  const rangeLabel = dateFrom || dateTo
+    ? `${dateFrom || 'start'}_to_${dateTo || 'today'}`
+    : ''
+
   const stats = {
-    total: payments.length,
-    paid: payments.filter(p => p.status === 'paid').length,
-    pending: payments.filter(p => p.status === 'pending').length,
-    overdue: payments.filter(p => p.status === 'overdue' || (p.status === 'pending' && new Date(p.dueDate) < new Date())).length,
-    totalAmount: payments.filter(p => p.status === 'paid').reduce((sum, p) => sum + p.amount, 0),
+    total: filteredPayments.length,
+    paid: filteredPayments.filter(p => p.status === 'paid').length,
+    pending: filteredPayments.filter(p => p.status === 'pending').length,
+    overdue: filteredPayments.filter(p => p.status === 'overdue' || (p.status === 'pending' && new Date(p.dueDate) < new Date())).length,
+    totalAmount: filteredPayments.filter(p => p.status === 'paid').reduce((sum, p) => sum + p.amount, 0),
   }
 
   // Pagination logic
-  const totalPages = Math.ceil(payments.length / ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(filteredPayments.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const paginatedPayments = payments.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  const paginatedPayments = filteredPayments.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   // Reset to page 1 when filter changes
   useEffect(() => {
     setCurrentPage(1)
-  }, [statusFilter])
+  }, [statusFilter, dateFrom, dateTo, dateBasis])
 
   return (
     <AdminLayout title="Payments">
@@ -277,9 +331,9 @@ export default function PaymentsPage() {
           </Select>
           <Button
             variant="outline"
-            onClick={() => exportPayments(payments)}
+            onClick={() => exportPayments(filteredPayments, rangeLabel)}
             className="flex items-center gap-2 dark:text-gray-200 dark:border-gray-600"
-            disabled={payments.length === 0}
+            disabled={filteredPayments.length === 0}
           >
             <Download className="h-4 w-4" />
             Export
@@ -409,6 +463,88 @@ export default function PaymentsPage() {
         </div>
       </div>
 
+      {/* Date range filter - primarily for pulling a period's income at tax time */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Period</Label>
+              <Select value={datePreset} onValueChange={applyPreset}>
+                <SelectTrigger className="w-52 dark:text-gray-200 dark:border-gray-600">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="this-month">This month</SelectItem>
+                  <SelectItem value="last-month">Last month</SelectItem>
+                  <SelectItem value="tax-current">
+                    Tax year {currentTaxYearStart}/{String(currentTaxYearStart + 1).slice(2)} (Mar-Feb)
+                  </SelectItem>
+                  <SelectItem value="tax-previous">
+                    Tax year {currentTaxYearStart - 1}/{String(currentTaxYearStart).slice(2)} (Mar-Feb)
+                  </SelectItem>
+                  <SelectItem value="custom">Custom range</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">From</Label>
+              <Input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => { setDateFrom(e.target.value); setDatePreset('custom') }}
+                className="w-44 dark:text-gray-200 dark:border-gray-600"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">To</Label>
+              <Input
+                type="date"
+                value={dateTo}
+                onChange={(e) => { setDateTo(e.target.value); setDatePreset('custom') }}
+                className="w-44 dark:text-gray-200 dark:border-gray-600"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Filter by</Label>
+              <Select value={dateBasis} onValueChange={(v) => setDateBasis(v as 'paidDate' | 'dueDate')}>
+                <SelectTrigger className="w-40 dark:text-gray-200 dark:border-gray-600">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="paidDate">Paid date</SelectItem>
+                  <SelectItem value="dueDate">Due date</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {(dateFrom || dateTo) && (
+              <Button
+                variant="ghost"
+                onClick={() => applyPreset('all')}
+                className="text-muted-foreground"
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+
+          {(dateFrom || dateTo) && (
+            <p className="text-sm text-muted-foreground mt-3">
+              {filteredPayments.length} payment{filteredPayments.length === 1 ? '' : 's'} in range
+              {dateBasis === 'paidDate'
+                ? ' (by paid date - unpaid payments are excluded)'
+                : ' (by due date)'}
+              {' \u2022 '}
+              <span className="font-semibold text-green-600">R{stats.totalAmount.toFixed(2)}</span> collected
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <Card>
@@ -507,6 +643,16 @@ export default function PaymentsPage() {
             <CardTitle>No Payment Records</CardTitle>
             <CardDescription>
               No payments have been recorded yet
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      ) : filteredPayments.length === 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>No payments in this period</CardTitle>
+            <CardDescription>
+              No payments match {dateFrom || 'the start'} to {dateTo || 'today'} by{' '}
+              {dateBasis === 'paidDate' ? 'paid date' : 'due date'}. Clear the filter to see all {payments.length}.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -611,7 +757,7 @@ export default function PaymentsPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
-                Showing {startIndex + 1} to {Math.min(startIndex + ITEMS_PER_PAGE, payments.length)} of {payments.length} payments
+                Showing {startIndex + 1} to {Math.min(startIndex + ITEMS_PER_PAGE, filteredPayments.length)} of {filteredPayments.length} payments
               </div>
               <div className="flex items-center gap-2">
                 <Button

@@ -72,8 +72,10 @@ export function exportMembers(members: any[]) {
   ])
 }
 
-export function exportPayments(payments: any[]) {
-  exportToCSV(payments, 'bz_fitness_payments', [
+export function exportPayments(payments: any[], periodLabel?: string) {
+  // Period goes in the filename so a tax export is identifiable on disk
+  const filename = periodLabel ? `bz_fitness_payments_${periodLabel}` : 'bz_fitness_payments'
+  exportToCSV(payments, filename, [
     { key: 'member', label: 'Member Name', transform: (v) => v?.name || '' },
     { key: 'amount', label: 'Amount (R)', transform: (v) => v?.toFixed(2) || '0.00' },
     { key: 'package', label: 'Package', transform: (v) => {
