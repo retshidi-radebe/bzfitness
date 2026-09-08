@@ -176,7 +176,7 @@ export default function Home() {
       <section id="programs" className="py-20 px-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">Our programmes & rates</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">Our programmes</h2>
             <div className="inline-flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-full border">
               <MapPin className="h-4 w-4 text-green-600" />
               <span className="text-sm font-medium">Setsoto Intermediate School Hall, Tseki</span>
@@ -301,126 +301,141 @@ export default function Home() {
             </Card>
           </div>
 
-          {/* Pricing */}
+          {/* Pricing section hidden at the business owner's request.
+              Kept here rather than deleted so it can be restored by removing this
+              comment wrapper. Prices are no longer shown anywhere on the public
+              site; the registration fee note above is intentionally still visible.
+          Pricing :
           <div className="max-w-5xl mx-auto">
-            {/* February Promotion Banner */}
-            <div className="mb-8 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl p-6 text-white text-center">
-              <div className="flex items-center justify-center gap-4">
-                <div className="flex-1">
-                  <p className="text-2xl md:text-3xl font-bold mb-1">🎉 25% OFF — LIMITED TIME!</p>
-                  <p className="text-sm md:text-base opacity-90">Join any package now and save 25%</p>
-                </div>
-                <div className="hidden md:flex text-6xl animate-bounce">
-                  ⚡
-                </div>
-              </div>
-            </div>
-            <h3 className="text-2xl font-bold text-center mb-8">Choose your package</h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Package 1 */}
-              <Card className="border-2 hover:border-green-400 transition-colors relative overflow-hidden">
-                <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
-                  25% OFF
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-2xl">Package 1</CardTitle>
-                  <CardDescription>Perfect for beginners</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-lg text-muted-foreground line-through mr-2">R100</span>
-                    <span className="text-4xl font-bold text-green-600">R75</span>
-                    <span className="text-sm text-muted-foreground">/month</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      1 session on weekdays
-                    </li>
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      1 scaling per month
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
+          February Promotion Banner :
+          <div className="mb-8 bg-gradient-to-r from-green-500 to-orange-500 rounded-2xl p-6 text-white text-center">
+          <div className="flex items-center justify-center gap-4">
+          <div className="flex-1">
+          <p className="text-2xl md:text-3xl font-bold mb-1">🎉 25% OFF — LIMITED TIME!</p>
+          <p className="text-sm md:text-base opacity-90">Join any package now and save 25%</p>
+          </div>
+          <div className="hidden md:flex text-6xl animate-bounce">
+          ⚡
+          </div>
+          </div>
+          </div>
+          <h3 className="text-2xl font-bold text-center mb-8">Choose your package</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+          Package 1 :
+          <Card className="border-2 hover:border-green-400 transition-colors relative overflow-hidden">
+          <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
+          25% OFF
+          </div>
+          <CardHeader>
+          <CardTitle className="text-2xl">Package 1</CardTitle>
+          <CardDescription>Perfect for beginners</CardDescription>
+          <div className="mt-4">
+          <span className="text-lg text-muted-foreground line-through mr-2">R100</span>
+          <span className="text-4xl font-bold text-green-600">R75</span>
+          <span className="text-sm text-muted-foreground">/month</span>
+          </div>
+          </CardHeader>
+          <CardContent>
+          <ul className="space-y-3">
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          1 session on weekdays
+          </li>
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          1 scaling per month
+          </li>
+          </ul>
+          </CardContent>
+          </Card>
 
-              {/* Package 2 - Featured */}
-              <Card className="border-4 border-green-500 relative overflow-hidden">
-                <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
-                  25% OFF
-                </div>
-                <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
-                  POPULAR
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-2xl">Package 2</CardTitle>
-                  <CardDescription>Best value</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-lg text-muted-foreground line-through mr-2">R170</span>
-                    <span className="text-4xl font-bold text-green-600">R130</span>
-                    <span className="text-sm text-muted-foreground">/month</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      Unlimited sessions weekly
-                    </li>
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      5 scalings per month
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
+          Package 2 - Featured :
+          <Card className="border-4 border-green-500 relative overflow-hidden">
+          <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
+          25% OFF
+          </div>
+          <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1">
+          POPULAR
+          </div>
+          <CardHeader>
+          <CardTitle className="text-2xl">Package 2</CardTitle>
+          <CardDescription>Best value</CardDescription>
+          <div className="mt-4">
+          <span className="text-lg text-muted-foreground line-through mr-2">R170</span>
+          <span className="text-4xl font-bold text-green-600">R130</span>
+          <span className="text-sm text-muted-foreground">/month</span>
+          </div>
+          </CardHeader>
+          <CardContent>
+          <ul className="space-y-3">
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          Unlimited sessions weekly
+          </li>
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          5 scalings per month
+          </li>
+          </ul>
+          </CardContent>
+          </Card>
 
-              {/* Package 3 */}
-              <Card className="border-2 hover:border-orange-400 transition-colors relative overflow-hidden">
-                <div className="absolute top-0 left-0 bg-orange-500 text-white text-xs font-bold px-3 py-1">
-                  25% OFF
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-2xl">Package 3</CardTitle>
-                  <CardDescription>Premium experience</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-lg text-muted-foreground line-through mr-2">R250</span>
-                    <span className="text-4xl font-bold text-orange-600">R190</span>
-                    <span className="text-sm text-muted-foreground">/month</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-orange-600" />
-                      5 hours private session/month
-                    </li>
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-orange-600" />
-                      Personalised diet plan
-                    </li>
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-orange-600" />
-                      Regular check-ups
-                    </li>
-                    <li className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-orange-600" />
-                      Unlimited scaling/month
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
+          Package 3 :
+          <Card className="border-2 hover:border-orange-400 transition-colors relative overflow-hidden">
+          <div className="absolute top-0 left-0 bg-orange-500 text-white text-xs font-bold px-3 py-1">
+          25% OFF
+          </div>
+          <CardHeader>
+          <CardTitle className="text-2xl">Package 3</CardTitle>
+          <CardDescription>Premium experience</CardDescription>
+          <div className="mt-4">
+          <span className="text-lg text-muted-foreground line-through mr-2">R250</span>
+          <span className="text-4xl font-bold text-orange-600">R190</span>
+          <span className="text-sm text-muted-foreground">/month</span>
+          </div>
+          </CardHeader>
+          <CardContent>
+          <ul className="space-y-3">
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-orange-600" />
+          5 hours private session/month
+          </li>
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-orange-600" />
+          Personalised diet plan
+          </li>
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-orange-600" />
+          Regular check-ups
+          </li>
+          <li className="flex items-center gap-2 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-orange-600" />
+          Unlimited scaling/month
+          </li>
+          </ul>
+          </CardContent>
+          </Card>
+          </div>
 
-            <div className="text-center mt-8">
-              <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-8">
-                <a href="https://wa.me/27629239411?text=Hi%20BZ%20Fitness%20-%20I%27d%20like%20to%20reserve%20a%20spot" target="_blank" rel="noopener noreferrer">
-                  Reserve a spot
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-              </Button>
-            </div>
+          <div className="text-center mt-8">
+          <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-8">
+          <a href="https://wa.me/27629239411?text=Hi%20BZ%20Fitness%20-%20I%27d%20like%20to%20reserve%20a%20spot" target="_blank" rel="noopener noreferrer">
+          Reserve a spot
+          <ArrowRight className="ml-2 h-5 w-5" />
+          </a>
+          </Button>
+          </div>
+          </div>
+          */}
+
+          {/* Kept out of the pricing block above so the CTA survives its removal */}
+          <div className="text-center mt-8">
+            <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-8">
+              <a href="https://wa.me/27629239411?text=Hi%20BZ%20Fitness%20-%20I%27d%20like%20to%20reserve%20a%20spot" target="_blank" rel="noopener noreferrer">
+                Reserve a spot
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
+            </Button>
           </div>
         </div>
       </section>
