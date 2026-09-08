@@ -54,3 +54,6 @@ server.log
 /db/*.db-shm
 /db/*.db-wal
 CLAUDE.md
+
+# This project uses bun (bun.lock); an npm lockfile makes Vercel switch to npm
+package-lock.json
